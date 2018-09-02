@@ -3,24 +3,7 @@
     <div class="clearfix content-inner">
 
       <h1 class="title">{{ .Title }}</h1>
-      <ul class="p-facts">
-        <li><i class="inline calendar"></i><time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05JST" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
-        {{ with .Section }}<li><i class="inline cursor"></i><a href="{{ $.Site.BaseURL }}{{ . | urlize }}/">{{ . }}</a></li>{{ end }}
-        {{ if eq (getenv "HUGO_ENV") "DEV" }}
-        <li>{{ .WordCount }} Words</li>
-        {{ if .IsDraft }}<li style="color: #2196f3;">DRAFT</li>{{ end }}
-        {{ end }}
-      </ul>
-    </div>
-    <div class="thumbnail"></div>
-  </header>
 
-  <div class="content-inner">
-    <div class="article-body">{{ .Content }}</div>
-  </div>
-
-  <footer class="article-footer">
-    <div class="content-inner">
       <ol class="p-crumb">
         <li><a href="{{ .Site.BaseURL }}"><i class="home"></i></a></li>
         {{ with .Section }}
@@ -28,6 +11,19 @@
         {{ end }}
         <li>{{ .Title }}</li>
       </ol>
+    </div>
+  </header>
+
+
+  <div class="thumbnail"></div>
+  <div class="content-inner">
+    <div class="article-body">{{ .Content }}</div>
+  </div>
+  <footer class="article-footer">
+    <div class="content-inner">
+      <ul class="p-facts">
+        <li><i class="inline calendar"></i><time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05JST" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+      </ul>
 
       {{ $params := .Params }}
       {{ range $key, $value := $.Site.Taxonomies }}
