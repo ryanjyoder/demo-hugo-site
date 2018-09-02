@@ -8,30 +8,20 @@ grade: stable
 confinement: strict
 
 parts:
-  webserver:
-    source: https://github.com/ryanjyoder/static-webserver.git
-    source-type: git
-    plugin: go
-    go-importpath: github.com/ryanjyoder/static-webserver
+  content:
+    plugin: dump
+    stage: [config.toml,archetypes, content, data, layouts, static, themes]
 
-  hugo:
+  webserver:
     source: https://github.com/gohugoio/hugo.git
     source-type: git
     plugin: go
     go-importpath: github.com/gohugoio/hugo
 
-  assets:
-    source: public/
-    organize:
-      '*': public/
-    plugin: dump
 
 apps:
   webserver:
-    command: static-webserver -port 8585 -dir $SNAP/public
+    command: hugo server -s $SNAP
     daemon: simple
     plugs: [network, network-bind]
 
-  hugo:
-    command: hugo
-    plugs: [network, network-bind]
