@@ -1,7 +1,8 @@
-baseURL = "http://example.org/"
+baseURL = "http://snaphugo.org/"
 languageCode = "en-us"
-title = "My New Hugo Site"
-theme = "hugo-theme-sam"
+title = "Hugo Snap Demo"
+theme = "hugo_theme_solit"
 
 [params]
     footerText = "© 2019"
+    googlefonts = "https://fonts.googleapis.com/css?family=Raleway:100"
