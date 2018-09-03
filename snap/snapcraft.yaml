@@ -38,7 +38,7 @@ parts:
       curl $url -L --output hugo.tar.gz
       tar -xvzf hugo.tar.gz
       ./hugo
-      install -d public
+      mv public $SNAPCRAFT_PART_INSTALL/
 
   webserver:
     source: https://github.com/ryanjyoder/static-webserver.git
