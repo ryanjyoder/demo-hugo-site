@@ -10,11 +10,6 @@ environment:
     GO111MODULE: 'on'
 
 parts:
-  content:
-    plugin: dump
-    stage: [config.toml,archetypes, content, data, layouts, static, themes]
-    after: [hugo]
-
   hugo:
     plugin: nil
     build-packages: [curl]
@@ -42,13 +37,18 @@ parts:
       esac
       curl $url -L --output hugo.tar.gz
       tar -xvzf hugo.tar.gz
-      install -d $SNAPCRAFT_PART_INSTALL/bin
-      cp -av hugo $SNAPCRAFT_PART_INSTALL/bin/
+      ./hugo
+      install -d public
 
+  webserver:
+    source: https://github.com/ryanjyoder/static-webserver.git
+    source-type: git
+    plugin: go
+    go-importpath: github.com/ryanjyoder/static-webserver
 
 apps:
-  hugo:
-    command: hugo server -s $SNAP --bind 0.0.0.0 --disableLiveReload 
+  webserver:
+    command: static-webserver -dir $SNAP/public -port 1313 
     daemon: simple
     plugs: [network, network-bind]
 
