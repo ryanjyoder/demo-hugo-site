@@ -35,6 +35,7 @@ parts:
       ;;
       *)
       echo SNAP_ARCH unknow type $SNAP_ARCH
+      env
       exit 1
       esac
       curl $url -L --output hugo.tar.gz
