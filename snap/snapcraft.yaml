@@ -32,7 +32,7 @@ parts:
       aarch64)
       url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM64.tar.gz
       ;;
-      i368)
+      i386)
       url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-32bit.tar.gz
       ;;
       *)
