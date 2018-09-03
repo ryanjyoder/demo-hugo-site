@@ -20,14 +20,15 @@ parts:
     override-build: |
       echo "\nStarting override-build:"
       url=""
-      case "$SNAP_ARCH" in
-      amd64) 
+      arch=`echo $SNAPCRAFT_ARCH_TRIPLET | awk -F- '{print $1}'` 
+      case "$arch" in
+      x86_64) 
       url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.tar.gz
       ;;
-      armf)
+      arm)
       url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM.tar.gz
       ;;
-      arm64)
+      aarch64)
       url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM64.tar.gz
       ;;
       i368)
