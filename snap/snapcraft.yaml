@@ -17,6 +17,7 @@ parts:
 
   hugo:
     plugin: nil
+    build-packages: [curl]
     override-build: |
       echo "\nStarting override-build:"
       url=""
