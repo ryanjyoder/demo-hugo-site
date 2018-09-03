@@ -12,7 +12,7 @@ environment:
 parts:
   content:
     plugin: dump
-    stage: [config.toml,archetypes, content, data, layouts, static, themes]
+    stage: [public]
     after: [hugo]
 
   hugo:
@@ -42,13 +42,12 @@ parts:
       esac
       curl $url -L --output hugo.tar.gz
       tar -xvzf hugo.tar.gz
-      install -d $SNAPCRAFT_PART_INSTALL/bin
-      cp -av hugo $SNAPCRAFT_PART_INSTALL/bin/
+      hugo
 
 
 apps:
   hugo:
-    command: hugo server -s $SNAP --bind 0.0.0.0 --disableLiveReload 
+    command: webserver -dir $SNAP/public -port 1313 
     daemon: simple
     plugs: [network, network-bind]
 
