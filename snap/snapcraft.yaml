@@ -13,48 +13,34 @@ parts:
   content:
     plugin: dump
     stage: [config.toml,archetypes, content, data, layouts, static, themes]
+    after: [hugo]
 
-parts:
   hugo:
-    source: https://github.com/gohugoio/hugo.git
-    source-tag: stable
-    source-type: git
-    plugin: go
-    go-importpath: github.com/gohugoio/hugo
-    build-packages:
-      - git
+    plugin: nil
     override-build: |
       echo "\nStarting override-build:"
-      export GOPATH=$(dirname $SNAPCRAFT_PART_INSTALL)/go
-      export PATH=$GOPATH/bin:$PATH
-      cd $GOPATH/src/github.com/gohugoio/hugo
-      echo ' * Running "go get -v github.com/magefile/mage"...'
-      go get -v github.com/magefile/mage
-      echo ' * Running "mage -v test"...'
-      mage -v test
-      echo " * Building hugo (build tag: none)..."
-      [ "$SNAPCRAFT_PROJECT_GRADE" = "stable" ] && mage -v hugoNoGitInfo || mage -v hugo
-      ./hugo version
-      ldd hugo || :
-      echo " * Building shell completion..."
-      ./hugo gen autocomplete --completionfile=hugo-completion
-      echo " * Installing to ${SNAPCRAFT_PART_INSTALL}..."
+      url=""
+      case "$SNAP_ARCH" in
+      amd64) 
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.tar.gz
+      ;;
+      armf)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM.tar.gz
+      ;;
+      arm64)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM64.tar.gz
+      ;;
+      i368)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-32bit.tar.gz
+      ;;
+      *)
+      echo SNAP_ARCH unknow type $SNAP_ARCH
+      exit 1
+      esac
+      curl $url -L --output hugo.tar.gz
+      tar -xvzf hugo.tar.gz
       install -d $SNAPCRAFT_PART_INSTALL/bin
       cp -av hugo $SNAPCRAFT_PART_INSTALL/bin/
-      mv -v hugo-completion $SNAPCRAFT_PART_INSTALL/
-      echo " * Stripping binary..."
-      ls -l $SNAPCRAFT_PART_INSTALL/bin/hugo
-      strip --remove-section=.comment --remove-section=.note $SNAPCRAFT_PART_INSTALL/bin/hugo
-      ls -l $SNAPCRAFT_PART_INSTALL/bin/hugo
-    after: [go]
-
-  go:
-    source-tag: go1.11
-
-  git:
-    plugin: nil
-    stage-packages: [git]
-    prime: [usr/bin/git]
 
 
 apps:
