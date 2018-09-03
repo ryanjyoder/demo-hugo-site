@@ -17,26 +17,53 @@ version: 0.1
 summary: Demo Hugo Site - Snap a hugo site
 description: |
  Build a hugo site and snap it with a webserver.
+
 grade: stable
 confinement: strict
+environment:
+    GO111MODULE: 'on'
 
 parts:
   content:
     plugin: dump
     stage: [config.toml,archetypes, content, data, layouts, static, themes]
+    after: [hugo]
 
-  webserver:
-    source: https://github.com/gohugoio/hugo.git
-    source-type: git
-    plugin: go
-    go-importpath: github.com/gohugoio/hugo
+  hugo:
+    plugin: nil
+    override-build: |
+      echo "\nStarting override-build:"
+      url=""
+      arch=`echo $SNAPCRAFT_ARCH_TRIPLET | awk -F- '{print $1}'` 
+      case "$arch" in
+      x86_64) 
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.tar.gz
+      ;;
+      arm)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM.tar.gz
+      ;;
+      aarch64)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM64.tar.gz
+      ;;
+      i368)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-32bit.tar.gz
+      ;;
+      *)
+      echo SNAP_ARCH unknow type $SNAP_ARCH
+      env
+      exit 1
+      esac
+      curl $url -L --output hugo.tar.gz
+      tar -xvzf hugo.tar.gz
+      install -d $SNAPCRAFT_PART_INSTALL/bin
+      cp -av hugo $SNAPCRAFT_PART_INSTALL/bin/
 
 
 apps:
-  webserver:
-    command: hugo server -s $SNAP --bind 0.0.0.0
+  hugo:
+    command: hugo server -s $SNAP --bind 0.0.0.0 --disableLiveReload 
     daemon: simple
-plugs: [network, network-bind]
+    plugs: [network, network-bind]
 ```
   
   <br>
@@ -54,12 +81,36 @@ Note: if you are not using `toml` for your config file, you will need to change 
 <br>
 ### Hugo
 
-The second section builds hugo.
+The second section downloads hugo. The section is a bit verbose, because we have to select the correct tar based on the architecture.
 ```yaml
-apps:
-  webserver:
-    command: hugo server -s $SNAP --bind 0.0.0.0 --disableLiveReload
-    daemon: simple
-    plugs: [network, network-bind]
+  hugo:
+    plugin: nil
+    override-build: |
+      echo "\nStarting override-build:"
+      url=""
+      arch=`echo $SNAPCRAFT_ARCH_TRIPLET | awk -F- '{print $1}'` 
+      case "$arch" in
+      x86_64) 
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.tar.gz
+      ;;
+      arm)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM.tar.gz
+      ;;
+      aarch64)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-ARM64.tar.gz
+      ;;
+      i368)
+      url=https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-32bit.tar.gz
+      ;;
+      *)
+      echo SNAP_ARCH unknow type $SNAP_ARCH
+      env
+      exit 1
+      esac
+      curl $url -L --output hugo.tar.gz
+      tar -xvzf hugo.tar.gz
+      install -d $SNAPCRAFT_PART_INSTALL/bin
+      cp -av hugo $SNAPCRAFT_PART_INSTALL/bin/
+
 ```
 Note: You can make changes to how hugo runs here. Port changes for example can be make here. If you have too many pages to hold in memory, considering adding `--renderToDisk --cacheDir $SNAP_DATA/public` to the command.
